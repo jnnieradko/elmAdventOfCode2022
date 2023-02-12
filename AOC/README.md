@@ -96,7 +96,7 @@ my-app/
 │   ├── logo.svg
 │   └── manifest.json
 ├── src
-│   ├── Main.elm
+│   ├── AOC_2022.elm
 │   ├── index.js
 │   ├── main.css
 │   └── serviceWorker.js
@@ -215,7 +215,7 @@ In the following example we will use JavaScript to write a log in the console, e
 `src/index.js` file to look like this:
 
 ```js
-import { Elm } from './Main.elm';
+import { Elm } from './AOC_2022.elm';
 
 const app = Elm.Main.init({
   node: document.getElementById('root')
@@ -511,7 +511,7 @@ Here is an example:
 
 ```js
 import logoPath from './logo.svg'; // Tell Webpack this JS file uses this image
-import { Main } from './Main.elm';
+import { Main } from './AOC_2022.elm';
 
 Main.embed(
   document.getElementById('root'),
@@ -625,7 +625,7 @@ Passing the variables to your Elm-code can be done via `flags`:
 
 ```javascript
 // index.js
-import { Main } from './Main.elm';
+import { Main } from './AOC_2022.elm';
 
 Main.fullscreen({
   environment: process.env.NODE_ENV,
@@ -634,7 +634,7 @@ Main.fullscreen({
 ```
 
 ```elm
--- Main.elm
+-- AOC_2022.elm
 type alias Flags = { apiKey : String, environment : String }
 
 init : Flags -> ( Model, Cmd Msg )

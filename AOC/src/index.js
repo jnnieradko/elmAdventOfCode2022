@@ -1,8 +1,8 @@
 import './main.css';
-import { Elm } from './Main.elm';
+import { Elm } from './AOC_2022.elm';
 import * as serviceWorker from './serviceWorker';
 
-Elm.Main.init({
+Elm.AOC_2022.init({
   node: document.getElementById('root')
 });
 
