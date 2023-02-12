@@ -4,7 +4,8 @@ import Browser
 import Html exposing (Html, div, h1, img, text)
 import AOC_1 exposing (aoc1)
 import AOC_1_part_2 exposing (sumOf3ElvesCalories)
-import AOC_2 exposing (xxx, entryData)
+import AOC_2 exposing (xxx, entryData, andTheWinnerIs)
+import AOC_2_part_2
 
 
 
@@ -42,7 +43,7 @@ view model =
     div []
         [ div [] [text "day 1 part.1 - sum of calories for Elve with the highest no of Cal  " , aoc1]
         , div [] [ Html.text  "day 1 part.2 - sum of calories for 3 Elves with the highest no of Cal ", text sumOf3ElvesCalories  ]
-        , div [] [text xxx, text entryData]
+        , div [] [text xxx, text andTheWinnerIs]
         ]
 
 

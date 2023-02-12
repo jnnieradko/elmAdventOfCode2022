@@ -1,11 +1,11 @@
-module AOC_2 exposing (..)
+module AOC_2_part_2 exposing (..)
 
 import Debug exposing (todo)
 import List.Extra as Le exposing (..)
 
 
-xxx =
-    "day 2  part.1 - My points in Paper / Rock / Scisors ::       "
+zzz =
+    "kkkkk       "
 
 
 entryData : String
@@ -2514,20 +2514,12 @@ A Z
 """
 
 
-formatData : List (List Shape)
-formatData =
+formatData2 : List (List String)
+formatData2 =
     entryData
         |> String.trim
         |> String.words
-        |> listShapes
         |> Le.groupsOf 2
-
-
-type Shape
-    = Paper
-    | Rock
-    | Scissors
-    | None
 
 
 symbolToShapes : String -> Shape
@@ -2542,38 +2534,81 @@ symbolToShapes s =
         "C" ->
             Scissors
 
-        "X" ->
-            Rock
-
-        "Y" ->
-            Paper
-
-        "Z" ->
-            Scissors
-
         _ ->
             None
 
 
-listShapes : List String -> List Shape
-listShapes ls =
-    List.map (\s -> symbolToShapes s) ls
+symbolToResult : String -> Result
+symbolToResult s =
+    case s of
+        "X" ->
+            Loose
+
+        "Y" ->
+            Draw
+
+        "Z" ->
+            Win
+
+        _ ->
+            NoRes
 
 
--- transform List [Shape,Shape] to List (Shape,Shape)
-transformLLStoLTS : List ( Shape, Shape )
-transformLLStoLTS =
-    List.map (\round -> ( Maybe.withDefault None (List.head round), Maybe.withDefault None (List.head (List.reverse round)) )) formatData
+type Shape
+    = Paper
+    | Rock
+    | Scissors
+    | None
+
+
+type Result
+    = Loose
+    | Draw
+    | Win
+    | NoRes
+
+
+
+-- transform List [String,String] to List (String,String)
+
+
+transformLLStoLTS2 : List ( String, String )
+transformLLStoLTS2 =
+    List.map (\round -> ( Maybe.withDefault "None" (List.head round), Maybe.withDefault "" (List.head (List.reverse round)) )) formatData2
+
+
+
+-- transform to List (Shape, Reult)
+
+
+listOfRounds : List ( Shape, Result )
+listOfRounds =
+    List.map
+        (\( opp, me ) ->
+            ( symbolToShapes opp, symbolToResult me )
+        )
+        transformLLStoLTS2
+
+
 
 -- rule how to count points for Shape
-scoresForShape : Shape -> Int
-scoresForShape s = case s of
-                        Paper -> 2
-                        Rock -> 1
-                        Scissors -> 3
-                        None -> 1000
 
--- rule how to count points for Result of Round
+
+scoresForShape : Shape -> Int
+scoresForShape s =
+    case s of
+        Paper ->
+            2
+
+        Rock ->
+            1
+
+        Scissors ->
+            3
+
+        None ->
+            1000
+
 scoresForResult : (Shape, Shape) -> Int
 scoresForResult (x,y) = case (x,y) of
                             ( Rock, Rock ) -> 3
@@ -2599,40 +2634,96 @@ scoresForResult (x,y) = case (x,y) of
                             ( _, _ ) ->  1000
 
 
--- List of points collected in each round
-pointsInEachRound : List Int
-pointsInEachRound =
+
+-- rule how to count points for Result of Round
+
+
+choicesInRounds : List ( Shape, Result ) -> List ( Shape, Shape )
+choicesInRounds lsr =
     List.map
-        (\( opp, me ) ->
-            case ( opp, me ) of
-                ( Rock, Rock ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+        (\( s, r ) ->
+            case ( s, r ) of
+                ( Rock, Loose ) ->
+                    ( Rock, Scissors )
 
-                ( Paper, Paper ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Rock, Draw ) ->
+                    ( Rock, Rock )
 
-                ( Scissors, Scissors ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Rock, Win ) ->
+                    ( Rock, Paper )
 
-                ( Rock, Paper ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Paper, Loose ) ->
+                    ( Paper, Rock )
 
-                ( Rock, Scissors ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Paper, Draw ) ->
+                    ( Paper, Paper )
 
-                ( Paper, Rock ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Paper, Win ) ->
+                    ( Paper, Scissors )
 
-                ( Paper, Scissors ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Scissors, Loose ) ->
+                    ( Scissors, Paper )
 
-                ( Scissors, Rock ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Scissors, Draw ) ->
+                    ( Scissors, Scissors )
 
-                ( Scissors, Paper ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( Scissors, Win ) ->
+                    ( Scissors, Rock )
 
-                ( None, _ ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( None, _ ) ->
+                    ( None, None )
 
-                ( _, _ ) -> (+) (scoresForResult (opp,me)) (scoresForShape me)
+                ( _, _ ) ->
+                    ( None, None )
         )
-        transformLLStoLTS
-
-
-andTheWinnerIs : String
-andTheWinnerIs = String.fromInt (List.sum pointsInEachRound)
+        lsr
 
 
 
+-- List of points collected in each round
 
+
+pointsInEachRound2 : List Int
+pointsInEachRound2 =
+    List.map
+        (\( opp, me) ->
+            case ( opp, me ) of
+                ( Rock, Rock ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Paper, Paper ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Scissors, Scissors ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Rock, Paper ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Rock, Scissors ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Paper, Rock ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Paper, Scissors ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Scissors, Rock ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( Scissors, Paper ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( None, _ ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+
+                ( _, _ ) ->
+                    (+) (scoresForResult ( opp, me )) (scoresForShape me)
+        )
+        (choicesInRounds listOfRounds)
+
+
+
+andTheWinnerIs2 : String
+andTheWinnerIs2 = String.fromInt (List.sum pointsInEachRound2)
